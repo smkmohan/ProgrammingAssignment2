@@ -3,55 +3,28 @@
 
 ## Write a short comment describing this function
 
-makeCacheMatrix <- function(x = numeric()) {
-# holds the cached value or NULL if nothing is cached
-        # initially nothing is cached so set it to NULL
-        cache <- NULL
-        
-        # store a matrix
-        setMatrix <- function(newValue) {
-                x <<- newValue
-                # since the matrix is assigned a new value, flush the cache
-                cache <<- NULL
+makeVector <- function(x = numeric()) {
+        m <- NULL
+        set <- function(y) {
+                x <<- y
+                m <<- NULL
         }
-
-        # returns the stored matrix
-        getMatrix <- function() {
-                x
-        }
-
-        # cache the given argument 
-        cacheInverse <- function(solve) {
-                cache <<- solve
-        }
-
-        # get the cached value
-        getInverse <- function() {
-                cache
-        }
-        
-        # return a list. Each named element of the list is a function
-        list(setMatrix = setMatrix, getMatrix = getMatrix, cacheInverse = cacheInverse, getInverse = getInverse)
-
+        get <- function() x
+        setmean <- function(mean) m <<- mean
+        getmean <- function() m
+        list(set = set, get = get,
+             setmean = setmean,
+             getmean = getmean)
 }
 
-
-## Write a short comment describing this function
-
-cacheSolve <- function(y, ...) {
-        # get the cached value
-        inverse <- y$getInverse()
-        # if a cached value exists return it
-        if(!is.null(inverse)) {
+cachemean <- function(x, ...) {
+        m <- x$getmean()
+        if(!is.null(m)) {
                 message("getting cached data")
-                return(inverse)
+                return(m)
         }
-        # otherwise get the matrix, caclulate the inverse and store it in
-        # the cache
-        data <- y$getMatrix()
-        inverse <- solve(data)
-        y$cacheInverse(inverse)
-        
-        # return the inverse
-        inverse
+        data <- x$get()
+        m <- mean(data, ...)
+        x$setmean(m)
+        m
 }
